@@ -1,5 +1,8 @@
-#TT for Yandex.Money 
-by Aleksey Kurza
+#Для Yandex.Money 
+автор Алексей Курза
 
-##Run
-`npm install`
+##Примечание
+Имел смелость `index.js` из корня проекта вынести в папку `/frontend` 
+
+##Для разработки
+запустить в консоли `npm install`

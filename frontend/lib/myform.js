@@ -8,14 +8,13 @@ const MyForm = {
 		email = email.trim();
 		phone = phone.trim();
 
-		// дефисы для двойной фамилии
-		let fioRegexp = /^[a-zа-яё\-]+\s+[a-zа-яё\-]+\s+[a-zа-яё\-]+$/i;
+		let fioRegexp = /^[a-zа-яё]+(\s+[a-zа-яё]+){2}$/i;
 		if (fioRegexp.test(fio) === false) {
 			errorFields.push('fio');
 		}
 
 		// надеюсь суть ТЗ не в том, чтобы написать идеальную проверку email и регулярку на 1000 строк кода
-		let emailRegexp = /^[a-z0-9]+[a-z0-9._\-]*[a-z0-9]*@ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com$/i;
+		let emailRegexp = /^[a-z0-9]+[a-z0-9._\-]*[a-z0-9]*@(ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com)$/i;
 		if (emailRegexp.test(email) === false) {
 			errorFields.push('email');
 		}
@@ -78,35 +77,50 @@ const MyForm = {
 			document.querySelector('#submitButton').disabled = true;
 
 			let xhr = new XMLHttpRequest();
-			xhr.open(
-				'POST',
-				document.querySelector('#myForm').action,
-				true
-			);
-			xhr.setRequestHeader(
-				'Content-type',
-				'application/x-www-form-urlencoded'
-			);
-			xhr.send(
-				'&fio='   + formData.fio   +
-				'&email=' + formData.email +
-				'&phone=' + formData.phone
-			);
-			xhr.onreadystatechange = () => {
-				if (xhr.readyState === 4) {
-					let res = JSON.parse(xhr.response);
-					switch (res.status) {
-						case 'success':
-							console.log('success');
-							break;
+			this.sendAjax(xhr, formData, this);
+		}
+	},
 
-						case 'error':
-							console.log('error');
-							break;
+	sendAjax(xhr, formData, that)
+	{
+		xhr.open(
+			'POST',
+			document.querySelector('#myForm').action,
+			true
+		);
+		xhr.setRequestHeader(
+			'Content-type',
+			'application/x-www-form-urlencoded'
+		);
+		xhr.send(
+			'&fio='   + formData.fio   +
+			'&email=' + formData.email +
+			'&phone=' + formData.phone
+		);
+		xhr.onreadystatechange = () => {
+			if (xhr.readyState === 4) {
+				let resContainer = document.querySelector('#resultContainer');
+				let res = JSON.parse(xhr.response);
+				switch (res.status) {
+					case 'success':
+						resContainer.innerHTML = 'Success';
+						resContainer.classList.add('success');
+						break;
 
-						case 'progress':
-							console.log('progress');
-					}
+					case 'error':
+						resContainer.innerHTML = res.reason;
+						resContainer.classList.add('error');
+						break;
+
+					case 'progress':
+						console.log(res);
+						resContainer.classList.add('progress');
+						setTimeout(
+							function() {
+								that.sendAjax(xhr, formData, that)
+							},
+							res.timeout
+						);
 				}
 			}
 		}
