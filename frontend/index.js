@@ -3,4 +3,7 @@
 import './main.less';
 import MyForm from './lib/myform.js';
 
-console.log(MyForm.getData());
+document.querySelector('#submitButton').onclick = (event) => {
+	event.preventDefault();
+	MyForm.submit();
+};
