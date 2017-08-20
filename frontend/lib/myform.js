@@ -10,7 +10,7 @@ const MyForm = {
 
 		// дефисы для двойной фамилии
 		let fioRegexp = /^[a-zа-яё\-]+\s+[a-zа-яё\-]+\s+[a-zа-яё\-]+$/i;
-		if (fio.match(fioRegexp) === null) {
+		if (fioRegexp.test(fio) === false) {
 			errorFields.push('fio');
 		}
 
@@ -49,7 +49,7 @@ const MyForm = {
 	},
 
 	getData() {
-		let form = document.querySelector('#myForm');
+		let form  = document.querySelector('#myForm');
 		let fio   = form.querySelector('#fio').value;
 		let email = form.querySelector('#email').value;
 		let phone = form.querySelector('#phone').value;
@@ -65,8 +65,22 @@ const MyForm = {
 	},
 
 	submit() {
-		let test = this.validate();
-		console.log(test);
+		let valid = this.validate();
+		let formData = [
+			'fio',
+			'email',
+			'phone'
+		];
+		for (let i in formData) {
+			if (valid.errorFields.indexOf(formData[i]) !== -1) {
+				document.querySelector(`#${ formData[i] }`).classList.add('error');
+			} else {
+				document.querySelector(`#${ formData[i] }`).classList.remove('error');
+			}
+		}
+		if (!valid.errorFields.length) {
+			document.querySelector('#submitButton').disabled = true;
+		}
 	},
 };
 
