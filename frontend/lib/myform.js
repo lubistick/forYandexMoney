@@ -66,20 +66,49 @@ const MyForm = {
 
 	submit() {
 		let valid = this.validate();
-		let formData = [
-			'fio',
-			'email',
-			'phone'
-		];
-		for (let i in formData) {
-			if (valid.errorFields.indexOf(formData[i]) !== -1) {
-				document.querySelector(`#${ formData[i] }`).classList.add('error');
+		let formData = this.getData();
+		for (let key in formData) {
+			if (valid.errorFields.indexOf(key) !== -1) {
+				document.querySelector(`#${ key }`).classList.add('error');
 			} else {
-				document.querySelector(`#${ formData[i] }`).classList.remove('error');
+				document.querySelector(`#${ key }`).classList.remove('error');
 			}
 		}
 		if (!valid.errorFields.length) {
 			document.querySelector('#submitButton').disabled = true;
+
+			let xhr = new XMLHttpRequest();
+			xhr.open(
+				'POST',
+				document.querySelector('#myForm').action,
+				true
+			);
+			xhr.setRequestHeader(
+				'Content-type',
+				'application/x-www-form-urlencoded'
+			);
+			xhr.send(
+				'&fio='   + formData.fio   +
+				'&email=' + formData.email +
+				'&phone=' + formData.phone
+			);
+			xhr.onreadystatechange = () => {
+				if (xhr.readyState === 4) {
+					let res = JSON.parse(xhr.response);
+					switch (res.status) {
+						case 'success':
+							console.log('success');
+							break;
+
+						case 'error':
+							console.log('error');
+							break;
+
+						case 'progress':
+							console.log('progress');
+					}
+				}
+			}
 		}
 	},
 };
