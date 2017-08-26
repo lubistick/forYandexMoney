@@ -59,8 +59,12 @@ const MyForm = {
 		};
 	},
 
-	setData() {
-
+	setData(data) {
+		let form  = document.querySelector('#myForm');
+		let {fio, email, phone} = data;
+		form.querySelector('#fio').value = fio;
+		form.querySelector('#email').value = email;
+		form.querySelector('#phone').value = phone;
 	},
 
 	submit() {
@@ -113,7 +117,6 @@ const MyForm = {
 						break;
 
 					case 'progress':
-						console.log(res);
 						resContainer.classList.add('progress');
 						setTimeout(
 							function() {
